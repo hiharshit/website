@@ -1,0 +1,19 @@
+{
+  "name": "personal-website",
+  "type": "module",
+  "scripts": {
+    "build": "bun scripts/optimize-images.mjs && bun scripts/build.mjs",
+    "build:force": "bun scripts/optimize-images.mjs --force && bun scripts/build.mjs --force",
+    "clean": "bun scripts/clean.mjs",
+    "images": "bun scripts/optimize-images.mjs",
+    "images:force": "bun scripts/optimize-images.mjs --force",
+    "new": "bun scripts/new-post.mjs",
+    "serve": "bunx http-server -p 3000 -c-1",
+    "start": "bun run build && bunx http-server -p 3000 -c-1"
+  },
+  "dependencies": {
+    "highlight.js": "^11.11.1",
+    "markdown-it": "^14.1.0",
+    "sharp": "^0.33.5"
+  }
+}

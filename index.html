@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Personal blog by Harshit Sharma exploring philosophical thoughts inspired by German existentialism and Hindu philosophy.">
+  <meta name="author" content="Harshit Sharma">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; style-src 'self'; font-src 'self'; script-src 'self'; img-src 'self' data:;">
+  <title>Harshit Sharma | Posts</title>
+
+  <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.svg">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="alternate" type="application/rss+xml" title="Harshit Sharma RSS Feed" href="/feed.xml">
+  <link rel="preload" href="/assets/fonts/inter-v20-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="css/style.min.css" as="style">
+  <link rel="stylesheet" href="css/style.min.css">
+
+
+  <meta property="og:type" content="website">
+
+  <meta property="og:title" content="Harshit Sharma | Posts">
+  <meta property="og:description"
+    content="Personal blog exploring philosophical thoughts on Existentialism and Vedanta.">
+
+  <meta name="twitter:card" content="summary_large_image">
+
+  <script src="js/theme-init.js"></script>
+</head>
+
+<body>
+  <a href="#main-content" class="skip-link">Skip to content</a>
+  <div class="page-wrapper">
+    <header class="site-header"></header>
+    <main id="main-content">
+      <div class="container">
+        <section class="hero fade-in">
+          <h1>Posts</h1>
+          <p class="hero-tagline">thinking <span class="dots"><span>.</span><span>.</span><span>.</span></span>
+          </p>
+        </section>
+
+        <div class="search-container fade-in">
+          <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" />
+            </svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search essays..." autocomplete="off">
+            <button class="search-clear" id="searchClear" aria-label="Clear search"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg></button>
+          </div>
+        </div>
+
+        <div class="filters-wrapper">
+          <div class="tag-filters fade-in" id="tagFilters"></div>
+          <button class="clear-filter-btn" id="clearFilterBtn" aria-label="Clear filters" data-tooltip="Clear filters">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+          <div class="sort-dropdown" id="sortDropdown">
+            <button class="sort-btn fade-in" id="sortTrigger" aria-label="Sort options" aria-haspopup="true"
+              aria-expanded="false" aria-controls="sortMenu" data-tooltip="Sort by date">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18M6 12h12M9 18h6" />
+              </svg>
+            </button>
+            <div class="sort-menu" id="sortMenu" role="menu">
+              <button class="sort-option active" role="menuitem" data-sort="newest">
+                <span>Newest first</span>
+                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </button>
+              <button class="sort-option" role="menuitem" data-sort="oldest">
+                <span>Oldest first</span>
+                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <section class="blog-list" id="blogList"></section>
+
+        <div class="no-results" id="noResults">
+          <p>No posts found matching your search.</p>
+        </div>
+
+        <nav class="pagination" id="pagination" aria-label="Blog pagination"></nav>
+
+        <div id="announcer" role="status" aria-live="polite" class="sr-only"></div>
+      </div>
+    </main>
+    <footer class="footer"></footer>
+    <button class="back-to-top" id="backToTop" aria-label="Back to top" data-tooltip="Back to top"><svg
+        viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="M18 15l-6-6-6 6" />
+      </svg></button>
+  </div>
+  <script type="module" src="js/main.js?v=3"></script>
+</body>
+
+</html>

@@ -1,0 +1,16 @@
+{
+    "name": "Harshit Sharma",
+    "domain": "",
+    "email": "",
+    "description": "",
+    "footer": {
+        "twitter": "HloHarshit",
+        "github": null,
+        "linkedin": null,
+        "email": null
+    },
+    "share": {
+        "twitter": true,
+        "copyLink": true
+    }
+}

@@ -1,0 +1,43 @@
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+
+# Environment & Secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Build Artifacts
+blog/*.html
+!blog/_template.html
+js/blog-data.js
+js/site-config.js
+css/style.min.css
+sitemap.xml
+feed.xml
+
+# Source Images (only optimized images should be committed)
+assets/images/src/
+
+# Backups
+*.bak
+*.backup
+*.old
+
+# Personal notes
+PERSONAL.md
