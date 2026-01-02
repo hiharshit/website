@@ -38,6 +38,7 @@ title: "${title}"
 date: "${today}"
 excerpt: "A brief description of your post for the homepage."
 tags: ["Tag1", "Tag2"]
+draft: false
 ---
 
 Your introduction paragraph goes here.

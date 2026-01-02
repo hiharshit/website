@@ -1,23 +1,12 @@
-
 import { blogPosts } from './blog-data.js';
 import { initLayout } from './layout.js';
+import { escapeHtml, removeListeners, onScroll } from './utils.js';
+import { ZenReader } from './zen-reader.js';
 
 const CONFIG = {
   POSTS_PER_PAGE: 5,
   DEBOUNCE_MS: 250,
   SCROLL_THRESHOLD: 400
-};
-
-const escapeHtml = (str) => {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-};
-
-const removeListeners = (el) => {
-  const clone = el.cloneNode(true);
-  el.parentNode.replaceChild(clone, el);
-  return clone;
 };
 
 const state = {
@@ -28,6 +17,8 @@ const state = {
   currentPage: 1,
   postsPerPage: CONFIG.POSTS_PER_PAGE
 };
+
+let animateMaskUpdates = () => {};
 
 function saveSession() {
   sessionStorage.setItem('blogState', JSON.stringify({
@@ -69,18 +60,43 @@ document.addEventListener('DOMContentLoaded', () => {
   initPagination();
   initReadTime();
   initCopyButtons();
+  
+  ZenReader.init();
 });
 
 function initCopyButtons() {
   document.querySelectorAll('.copy-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
-      const codeBlock = btn.closest('.code-header').nextElementSibling.querySelector('code');
+      const codeBlock = btn.closest('.code-block');
       if (!codeBlock) return;
-
-      const text = codeBlock.innerText;
       
-      try {
-        await navigator.clipboard.writeText(text);
+      const codeEl = codeBlock.querySelector('pre code');
+      if (!codeEl) return;
+
+      const text = codeEl.innerText;
+      let copied = false;
+      
+      if (navigator.clipboard) {
+        try {
+          await navigator.clipboard.writeText(text);
+          copied = true;
+        } catch (e) {}
+      }
+      
+      if (!copied) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try {
+          copied = document.execCommand('copy');
+        } catch (e) {}
+        document.body.removeChild(ta);
+      }
+      
+      if (copied) {
         const originalIcon = btn.innerHTML;
         btn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
         btn.classList.add('copied');
@@ -89,8 +105,6 @@ function initCopyButtons() {
           btn.innerHTML = originalIcon;
           btn.classList.remove('copied');
         }, 2000);
-      } catch (err) {
-        console.error('Failed to copy:', err);
       }
     });
   });
@@ -204,29 +218,17 @@ function renderPosts(posts) {
 function updateUIState() {
   const noResults = document.getElementById('noResults');
   if (noResults) {
-    if (state.filteredPosts.length === 0) {
-      noResults.classList.add('visible');
-    } else {
-      noResults.classList.remove('visible');
-    }
+    noResults.classList.toggle('visible', state.filteredPosts.length === 0);
   }
 
   const clearFilterBtn = document.getElementById('clearFilterBtn');
   if (clearFilterBtn) {
-    if (state.activeTag !== 'all') {
-      clearFilterBtn.classList.add('visible');
-    } else {
-      clearFilterBtn.classList.remove('visible');
-    }
+    clearFilterBtn.classList.toggle('visible', state.activeTag !== 'all');
   }
 
   const searchClear = document.getElementById('searchClear');
   if (searchClear) {
-    if (state.searchQuery !== '') {
-      searchClear.classList.add('visible');
-    } else {
-      searchClear.classList.remove('visible');
-    }
+    searchClear.classList.toggle('visible', state.searchQuery !== '');
   }
 }
 
@@ -379,11 +381,7 @@ function renderTags() {
   const tagButtons = document.querySelectorAll('.tag-btn');
   tagButtons.forEach(btn => {
     const tag = btn.dataset.tag;
-    if (tag === state.activeTag) {
-      btn.classList.add('active');
-    } else {
-      btn.classList.remove('active');
-    }
+    btn.classList.toggle('active', tag === state.activeTag);
   });
 }
 
@@ -402,7 +400,7 @@ function setupMaskLogic(container) {
   const resizeObserver = new ResizeObserver(() => updateMask());
   resizeObserver.observe(container);
   
-  window.animateMaskUpdates = () => {
+  animateMaskUpdates = () => {
     let count = 0;
     updateMask();
     const int = setInterval(() => {
@@ -473,23 +471,14 @@ function initSortDropdown() {
   updateIcon();
 
   options.forEach(opt => {
-    if (opt.dataset.sort === state.sortOrder) {
-      opt.classList.add('active');
-    } else {
-      opt.classList.remove('active');
-    }
+    opt.classList.toggle('active', opt.dataset.sort === state.sortOrder);
   });
 
   trigger.onclick = (e) => {
     e.stopPropagation();
     const isOpen = menu.classList.contains('open');
-    if (isOpen) {
-      menu.classList.remove('open');
-      trigger.setAttribute('aria-expanded', 'false');
-    } else {
-      menu.classList.add('open');
-      trigger.setAttribute('aria-expanded', 'true');
-    }
+    menu.classList.toggle('open', !isOpen);
+    trigger.setAttribute('aria-expanded', !isOpen);
   };
 
   document.addEventListener('click', (e) => {
@@ -520,8 +509,6 @@ function initSortDropdown() {
     };
   });
 }
-
-
 
 function initThemeToggle() {
   const toggle = document.getElementById('themeToggle');
@@ -561,7 +548,7 @@ function initTooltips() {
     const rect = target.getBoundingClientRect();
     const tooltipRect = tooltip.getBoundingClientRect();
     const padding = 12;
-    const gap = 8;
+    const gap = placement === 'left' ? 24 : 8;
 
     let left, top;
 
@@ -608,9 +595,7 @@ function initTooltips() {
     }
   });
   
-  window.addEventListener('scroll', () => {
-    if (activeTarget) hide();
-  }, { passive: true });
+  onScroll(hide);
 }
 
 function initShareButtons() {
@@ -659,192 +644,12 @@ function initShareButtons() {
 function initBackToTop() {
   const button = document.getElementById('backToTop');
   if (!button) return;
-  let ticking = false;
-  const updateVisibility = () => {
+  
+  onScroll(() => {
     button.classList.toggle('visible', window.scrollY > CONFIG.SCROLL_THRESHOLD);
-    ticking = false;
-  };
-  window.addEventListener('scroll', () => {
-    if (!ticking) { requestAnimationFrame(updateVisibility); ticking = true; }
-  }, { passive: true });
-  button.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  });
+  
+  button.addEventListener('click', () => { 
+    window.scrollTo({ top: 0, behavior: 'smooth' }); 
+  });
 }
-
-const ZenReader = {
-  isPostPage: false,
-  header: null,
-  progressBar: null,
-  postContent: null,
-  postFooter: null,
-  lastScrollY: 0,
-  sections: [],
-  waypointLines: [],
-  waypointsContainer: null,
-  
-  init() {
-    this.postContent = document.querySelector('.post-content');
-    this.isPostPage = !!this.postContent;
-    this.header = document.querySelector('.site-header');
-    
-    if (!this.isPostPage) return;
-    
-    this.postFooter = document.querySelector('.post-footer');
-    
-    this.createProgressBar();
-    this.initAutoHideHeader();
-    this.initProgressTracker();
-    this.initEndOfArticle();
-    this.initSectionWaypoints();
-    initShareButtons();
-  },
-  
-  createProgressBar() {
-    const progressContainer = document.createElement('div');
-    progressContainer.className = 'reading-progress';
-    progressContainer.innerHTML = '<div class="reading-progress-bar"></div>';
-    document.body.appendChild(progressContainer);
-    this.progressBar = progressContainer.querySelector('.reading-progress-bar');
-  },
-  
-  initAutoHideHeader() {
-    if (!this.header) return;
-    
-    let ticking = false;
-    const threshold = 100;
-    
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      if (currentScrollY < threshold) {
-        this.header.classList.remove('header-hidden');
-      } else if (currentScrollY > this.lastScrollY) {
-        this.header.classList.add('header-hidden');
-      } else {
-        this.header.classList.remove('header-hidden');
-      }
-      
-      this.lastScrollY = currentScrollY;
-      ticking = false;
-    };
-    
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        requestAnimationFrame(handleScroll);
-        ticking = true;
-      }
-    }, { passive: true });
-  },
-  
-  initProgressTracker() {
-    if (!this.progressBar || !this.postContent) return;
-    
-    let ticking = false;
-    
-    const updateProgress = () => {
-      const article = this.postContent;
-      const articleBottom = article.offsetTop + article.offsetHeight;
-      const windowHeight = window.innerHeight;
-      const scrollY = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight;
-      
-      const scrollableHeight = docHeight - windowHeight;
-      const progress = scrollableHeight > 0 ? Math.min(scrollY / scrollableHeight, 1) : 1;
-      
-      this.progressBar.style.transform = `scaleX(${progress})`;
-      ticking = false;
-    };
-    
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        requestAnimationFrame(updateProgress);
-        ticking = true;
-      }
-    }, { passive: true });
-    
-    updateProgress();
-  },
-  
-  initEndOfArticle() {
-    if (!this.postFooter) return;
-    
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          this.postFooter.classList.add('visible');
-        }
-      });
-    }, {
-      threshold: 0.1,
-      rootMargin: '0px 0px 0px 0px'
-    });
-    
-    observer.observe(this.postFooter);
-  },
-  
-  initSectionWaypoints() {
-    const headings = this.postContent.querySelectorAll('h2');
-    if (headings.length < 2) return;
-    
-    this.sections = Array.from(headings);
-    
-    this.waypointsContainer = document.createElement('nav');
-    this.waypointsContainer.className = 'section-waypoints';
-    this.waypointsContainer.setAttribute('aria-label', 'Article sections');
-    
-    this.sections.forEach((heading, index) => {
-      const dot = document.createElement('button');
-      dot.className = 'waypoint-dot';
-      dot.setAttribute('data-tooltip', heading.textContent);
-      dot.setAttribute('data-tooltip-placement', 'left');
-      dot.setAttribute('aria-label', `Jump to: ${heading.textContent}`);
-      
-      dot.addEventListener('click', () => {
-        const offset = 80;
-        const top = heading.getBoundingClientRect().top + window.scrollY - offset;
-        window.scrollTo({ top, behavior: 'smooth' });
-      });
-      
-      this.waypointLines.push(dot);
-      this.waypointsContainer.appendChild(dot);
-    });
-    
-    document.body.appendChild(this.waypointsContainer);
-    
-    let ticking = false;
-    const updateActiveWaypoint = () => {
-      const scrollY = window.scrollY;
-      const offset = 150;
-      
-      let activeIndex = 0;
-      for (let i = this.sections.length - 1; i >= 0; i--) {
-        const sectionTop = this.sections[i].offsetTop - offset;
-        if (scrollY >= sectionTop) {
-          activeIndex = i;
-          break;
-        }
-      }
-      
-      this.waypointLines.forEach((line, i) => {
-        line.classList.toggle('active', i === activeIndex);
-      });
-      
-      const showWaypoints = scrollY > 200;
-      this.waypointsContainer.classList.toggle('visible', showWaypoints);
-      
-      ticking = false;
-    };
-    
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        requestAnimationFrame(updateActiveWaypoint);
-        ticking = true;
-      }
-    }, { passive: true });
-    
-    updateActiveWaypoint();
-  }
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-  ZenReader.init();
-});

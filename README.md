@@ -194,8 +194,10 @@ Images automatically use blur-up lazy loading:
 │   └── style.min.css       ← Generated minified CSS
 │
 ├── js/
-│   ├── main.js             ← Site functionality
+│   ├── main.js             ← Blog list, search, filters, pagination
 │   ├── layout.js           ← Header/footer injection
+│   ├── utils.js            ← Shared utilities (scroll handler, debounce)
+│   ├── zen-reader.js       ← Reading progress, waypoints, auto-hide header
 │   ├── lazy-images.js      ← Progressive image loader
 │   └── blog-data.js        ← Generated post index
 │

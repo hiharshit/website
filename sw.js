@@ -1,4 +1,4 @@
-const CACHE_NAME = 'harshitsharma-v3';
+const CACHE_NAME = 'harshitsharma-v4';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -7,6 +7,8 @@ const STATIC_ASSETS = [
   '/css/style.min.css',
   '/js/main.js',
   '/js/layout.js',
+  '/js/utils.js',
+  '/js/zen-reader.js',
   '/js/blog-data.js',
   '/js/theme-init.js',
   '/assets/fonts/inter-v20-latin-regular.woff2',

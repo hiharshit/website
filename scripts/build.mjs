@@ -197,8 +197,12 @@ function minifyCSS(css) {
 function generateHTML(slug, frontmatter, markdownContent, template, readTime) {
   const htmlContent = md.render(markdownContent);
   const formattedDate = formatDate(frontmatter.date);
-  const tags = Array.isArray(frontmatter.tags) ? frontmatter.tags : [];
-  const tagsHtml = tags.map(tag => `<span class="post-tag">${tag}</span>`).join('\n                            ');
+  const tags = Array.isArray(frontmatter.tags) 
+    ? frontmatter.tags.filter(tag => tag && tag.trim() !== '') 
+    : [];
+  const tagsHtml = tags.length > 0
+    ? `<div class="post-tags">\n                            ${tags.map(tag => `<span class="post-tag">${tag}</span>`).join('\n                            ')}\n                        </div>`
+    : '';
 
   let html = template;
 
@@ -211,7 +215,7 @@ function generateHTML(slug, frontmatter, markdownContent, template, readTime) {
 
   html = html.replace(
     /<div class="post-tags">\s*<span class="post-tag">TAG_1<\/span>\s*<span class="post-tag">TAG_2<\/span>\s*<\/div>/,
-    `<div class="post-tags">\n                            ${tagsHtml}\n                        </div>`
+    tagsHtml
   );
 
   html = html.replace(
@@ -378,7 +382,9 @@ async function build() {
       title: frontmatter.title,
       date: frontmatter.date,
       excerpt: frontmatter.excerpt,
-      tags: Array.isArray(frontmatter.tags) ? frontmatter.tags : [],
+      tags: Array.isArray(frontmatter.tags) 
+        ? frontmatter.tags.filter(tag => tag && tag.trim() !== '') 
+        : [],
       readTime
     });
 
