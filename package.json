@@ -2,6 +2,7 @@
   "name": "personal-website",
   "type": "module",
   "scripts": {
+    "dev": "bun scripts/build.mjs --drafts && bunx http-server -p 3000 -c-1",
     "build": "bun scripts/optimize-images.mjs && bun scripts/build.mjs",
     "build:force": "bun scripts/optimize-images.mjs --force && bun scripts/build.mjs --force",
     "clean": "bun scripts/clean.mjs",

@@ -37,6 +37,7 @@ const isValidDate = (dateStr) => {
 };
 
 const FORCE_REBUILD = process.argv.includes('--force');
+const INCLUDE_DRAFTS = process.argv.includes('--drafts');
 
 const md = new MarkdownIt({
   html: true,
@@ -194,7 +195,7 @@ function minifyCSS(css) {
     .trim();
 }
 
-function generateHTML(slug, frontmatter, markdownContent, template, readTime) {
+function generateHTML(slug, frontmatter, markdownContent, template, readTime, isDraft = false) {
   const htmlContent = md.render(markdownContent);
   const formattedDate = formatDate(frontmatter.date);
   const tags = Array.isArray(frontmatter.tags) 
@@ -204,11 +205,21 @@ function generateHTML(slug, frontmatter, markdownContent, template, readTime) {
     ? `<div class="post-tags">\n                            ${tags.map(tag => `<span class="post-tag">${tag}</span>`).join('\n                            ')}\n                        </div>`
     : '';
 
+  const draftBanner = isDraft 
+    ? `<div class="draft-banner">Draft</div>`
+    : '';
+
   let html = template;
 
   html = html.replace(/YOUR_TITLE_HERE/g, frontmatter.title);
   html = html.replace(/YOUR_DESCRIPTION_HERE/g, frontmatter.excerpt);
   html = html.replace(/YOUR_SLUG_HERE/g, slug);
+  
+  const postUrl = CONFIG.DOMAIN ? `${CONFIG.DOMAIN}/blog/${slug}.html` : `/blog/${slug}.html`;
+  const ogImage = CONFIG.DOMAIN ? `${CONFIG.DOMAIN}/assets/images/og-default.png` : `/assets/images/og-default.png`;
+  html = html.replace(/YOUR_OG_URL_HERE/g, postUrl);
+  html = html.replace(/YOUR_OG_IMAGE_HERE/g, ogImage);
+  
   html = html.replace(/YOUR_DATE_HERE/g, formattedDate);
   html = html.replace(/YYYY-MM-DD/g, frontmatter.date);
   html = html.replace(/X min read/g, `${readTime} min read`);
@@ -220,7 +231,7 @@ function generateHTML(slug, frontmatter, markdownContent, template, readTime) {
 
   html = html.replace(
     /<div class="post-content">[\s\S]*?<!-- YOUR CONTENT HERE -->[\s\S]*?<\/div>\s*<div class="post-footer">/,
-    `<div class="post-content">\n                        ${htmlContent}\n                    </div>\n                    <div class="post-footer">`
+    `<div class="post-content">\n                        ${draftBanner}${htmlContent}\n                    </div>\n                    <div class="post-footer">`
   );
 
   return html;
@@ -359,7 +370,8 @@ async function build() {
     const mdContent = fs.readFileSync(mdPath, 'utf-8');
     const { frontmatter, body } = parseFrontmatter(mdContent);
 
-    if (frontmatter.draft === true) {
+    const isDraft = frontmatter.draft === true;
+    if (isDraft && !INCLUDE_DRAFTS) {
       drafts++;
       console.log(`Draft: ${file} (skipped)`);
       continue;
@@ -399,7 +411,7 @@ async function build() {
       }
     }
 
-    const html = generateHTML(slug, frontmatter, body, template, readTime);
+    const html = generateHTML(slug, frontmatter, body, template, readTime, isDraft);
     fs.writeFileSync(htmlPath, html);
     console.log(`Generated: blog/${slug}.html`);
     generated++;

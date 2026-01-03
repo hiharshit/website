@@ -10,6 +10,7 @@ const STATIC_ASSETS = [
   '/js/utils.js',
   '/js/zen-reader.js',
   '/js/blog-data.js',
+  '/js/site-config.js',
   '/js/theme-init.js',
   '/assets/fonts/inter-v20-latin-regular.woff2',
   '/assets/fonts/inter-v20-latin-500.woff2',

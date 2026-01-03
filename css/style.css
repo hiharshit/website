@@ -76,6 +76,7 @@
   --max-width: 680px; --nav-height: 64px;
   --transition-instant: 50ms ease; --transition-fast: 120ms ease;
   --transition-base: 200ms ease;
+  --color-avatar-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 [data-theme="dark"] {
@@ -557,6 +558,21 @@ main { flex: 1; padding: var(--space-2xl) 0; padding-top: calc(var(--nav-height)
 
 /* Post Page */
 .post-header { margin-bottom: var(--space-3xl); padding-bottom: var(--space-xl); border-bottom: 1px solid var(--color-border); }
+
+.draft-banner {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  background-color: var(--color-bg-alt);
+  border: 1px dashed var(--color-border);
+  padding: 6px 14px;
+  border-radius: 6px;
+  margin-bottom: var(--space-lg);
+}
 .post-back { display: inline-flex; align-items: center; gap: var(--space-sm); font-size: 0.875rem; color: var(--color-text-muted); margin-bottom: var(--space-xl); transition: color var(--transition-fast), transform var(--transition-fast); }
 .post-back:hover { color: var(--color-text); transform: translateX(-4px); }
 .post-back svg { width: 16px; height: 16px; }
@@ -566,7 +582,7 @@ main { flex: 1; padding: var(--space-2xl) 0; padding-top: calc(var(--nav-height)
 .post-tag { font-size: 0.7rem; font-weight: 500; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 0.05em; padding: 4px 10px; border: 1px solid var(--color-border); border-radius: 4px; }
 .post-info { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-md); }
 .post-author { display: flex; align-items: center; gap: var(--space-md); }
-.post-author-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 500; }
+.post-author-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--color-avatar-gradient); display: flex; align-items: center; justify-content: center; color: white; font-weight: 500; }
 .post-author-details { font-size: 0.9rem; }
 .post-author-name { font-weight: 500; }
 .post-author-date { color: var(--color-text-muted); }

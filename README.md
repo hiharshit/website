@@ -93,6 +93,7 @@ title: "Post Title"
 date: "2025-12-22"
 excerpt: "Brief description for homepage."
 tags: ["Tag1", "Tag2"]
+draft: false
 ---
 
 Your content here...
@@ -108,15 +109,21 @@ Text with **bold**, *italic*, [links](https://example.com).
 
 ### Frontmatter Fields
 
-| Field     | Required | Description              |
-| --------- | -------- | ------------------------ |
-| `title`   | ✅        | Post title               |
-| `date`    | ✅        | Date (YYYY-MM-DD)        |
-| `excerpt` | ✅        | Homepage summary         |
-| `tags`    | ❌        | Categories for filtering |
-| `draft`   | ❌        | Set `true` to hide post  |
+| Field     | Required | Description                              |
+| --------- | -------- | ---------------------------------------- |
+| `title`   | ✅        | Post title                               |
+| `date`    | ✅        | Date (YYYY-MM-DD)                        |
+| `excerpt` | ✅        | Homepage summary                         |
+| `tags`    | ❌        | Categories for filtering                 |
+| `draft`   | ❌        | Set `true` to preview without publishing |
 
 Read time is auto-calculated from word count.
+
+### Working with Drafts
+
+1. Add `draft: true` to your post's frontmatter
+2. Run `bun run dev` to preview (shows "Draft" label)
+3. When ready: remove `draft: true` (or set `draft: false`), run `bun run start`, then push
 
 ---
 
@@ -155,22 +162,23 @@ Images automatically use blur-up lazy loading:
 
 ## Commands
 
-| Command                | What It Does                                      |
-| ---------------------- | ------------------------------------------------- |
-| `bun run new "Title"`  | Create new post with template                     |
-| `bun run start`        | Optimize images + build HTML + serve at :3000     |
-| `bun run build`        | Optimize images + build (incremental)             |
-| `bun run build:force`  | Rebuild everything (use after template/CSS edits) |
-| `bun run images`       | Optimize new images only                          |
-| `bun run images:force` | Reprocess all images                              |
-| `bun run serve`        | Serve without building                            |
-| `bun run clean`        | Remove all generated files                        |
+### Daily Use
 
-### When to Use Each
+| Command               | What It Does                      |
+| --------------------- | --------------------------------- |
+| `bun run new "Title"` | Create a new post                 |
+| `bun run dev`         | Preview locally (includes drafts) |
+| `bun run start`       | Build + preview (excludes drafts) |
 
-- **`bun run start`** - Default for adding/editing posts. Does everything.
-- **`bun run build:force`** - After editing `blog/_template.html` or `css/style.css`.
-- **`bun run clean`** - When you want a fresh rebuild from scratch.
+### Advanced
+
+| Command               | When to Use                                   |
+| --------------------- | --------------------------------------------- |
+| `bun run build:force` | After editing template or CSS                 |
+| `bun run clean`       | Reset — removes all generated files           |
+| `bun run build`       | Build without serving                         |
+| `bun run serve`       | Serve without building                        |
+| `bun run images`      | Process images only (build already does this) |
 
 ---
 
@@ -210,6 +218,7 @@ Images automatically use blur-up lazy loading:
 ├── index.html              ← Homepage
 ├── about.html              ← About page
 ├── 404.html                ← Error page
+├── robots.txt              ← Search engine rules
 ├── sitemap.xml             ← Generated (SEO)
 └── feed.xml                ← Generated (RSS)
 ```
