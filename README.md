@@ -18,6 +18,7 @@ Edit `site.config.json` to update your site settings:
   "name": "Your Name",
   "domain": "yourdomain.com",
   "email": "you@email.com",
+  "avatar": "/assets/images/avatar.jpg",
   "social": {
     "twitter": "username",
     "github": "username",
@@ -25,6 +26,12 @@ Edit `site.config.json` to update your site settings:
   }
 }
 ```
+
+**Avatar Image:**
+- Place your avatar image at `assets/images/avatar.jpg` (or `.png`, `.webp`)
+- Update the `avatar` field in `site.config.json` with the path
+- Set to `null` or `""` to use initials with gradient instead
+- Recommended size: 200x200px or larger, square aspect ratio
 
 After editing, run `bun run build` to apply changes everywhere.
 

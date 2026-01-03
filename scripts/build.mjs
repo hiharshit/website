@@ -358,6 +358,7 @@ async function build() {
   }
 
   const posts = [];
+  const draftSlugs = [];
   let generated = 0;
   let skipped = 0;
   let drafts = 0;
@@ -373,6 +374,7 @@ async function build() {
     const isDraft = frontmatter.draft === true;
     if (isDraft && !INCLUDE_DRAFTS) {
       drafts++;
+      draftSlugs.push(slug);
       console.log(`Draft: ${file} (skipped)`);
       continue;
     }
@@ -415,6 +417,16 @@ async function build() {
     fs.writeFileSync(htmlPath, html);
     console.log(`Generated: blog/${slug}.html`);
     generated++;
+  }
+
+  if (!INCLUDE_DRAFTS && draftSlugs.length > 0) {
+    for (const slug of draftSlugs) {
+      const draftHtmlPath = path.join(CONFIG.PATHS.BLOG, `${slug}.html`);
+      if (fs.existsSync(draftHtmlPath)) {
+        fs.unlinkSync(draftHtmlPath);
+        console.log(`Removed draft: blog/${slug}.html`);
+      }
+    }
   }
 
   const blogData = generateBlogData(posts);

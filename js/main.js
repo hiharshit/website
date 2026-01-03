@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initPagination();
   initReadTime();
   initCopyButtons();
+  initAvatar();
   
   ZenReader.init();
 });
@@ -652,4 +653,27 @@ function initBackToTop() {
   button.addEventListener('click', () => { 
     window.scrollTo({ top: 0, behavior: 'smooth' }); 
   });
+}
+
+function initAvatar() {
+  import('./site-config.js').then(module => {
+    const config = module.siteConfig;
+    if (!config.avatar) return;
+    
+    const avatarEl = document.querySelector('[data-avatar="true"]');
+    if (!avatarEl) return;
+    
+    const img = document.createElement('img');
+    img.src = config.avatar;
+    img.alt = config.name || 'Avatar';
+    
+    img.onload = () => {
+      avatarEl.innerHTML = '';
+      avatarEl.appendChild(img);
+    };
+    
+    img.onerror = () => {
+      console.warn('Failed to load avatar image');
+    };
+  }).catch(() => {});
 }
