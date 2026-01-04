@@ -168,11 +168,11 @@ Images automatically use blur-up lazy loading:
 
 ### Daily Use
 
-| Command               | What It Does                      |
-| --------------------- | --------------------------------- |
-| `bun run new "Title"` | Create a new post                 |
-| `bun run dev`         | Preview locally (includes drafts) |
-| `bun run start`       | Build + preview (excludes drafts) |
+| Command               | What It Does                           |
+| --------------------- | -------------------------------------- |
+| `bun run new "Title"` | Create a new post                      |
+| `bun run dev`         | Watch mode with auto-rebuild on change |
+| `bun run start`       | Build + preview (excludes drafts)      |
 
 ### Advanced
 
@@ -211,10 +211,13 @@ Images automatically use blur-up lazy loading:
 │   ├── utils.js            ← Shared utilities (scroll handler, debounce)
 │   ├── zen-reader.js       ← Reading progress, waypoints, auto-hide header
 │   ├── lazy-images.js      ← Progressive image loader
-│   └── blog-data.js        ← Generated post index
+│   ├── theme-init.js       ← Theme detection (runs before render)
+│   ├── blog-data.js        ← Generated post index
+│   └── site-config.js      ← Generated from site.config.json
 │
 ├── scripts/                ← Build automation
 │   ├── build.mjs           ← Markdown → HTML + minify CSS
+│   ├── dev.mjs             ← Watch mode with hot reload
 │   ├── optimize-images.mjs ← Image processing + placeholders
 │   ├── new-post.mjs        ← Post scaffolder
 │   └── clean.mjs           ← Remove generated files
@@ -222,6 +225,7 @@ Images automatically use blur-up lazy loading:
 ├── index.html              ← Homepage
 ├── about.html              ← About page
 ├── 404.html                ← Error page
+├── sw.js                   ← Service worker (offline caching)
 ├── robots.txt              ← Search engine rules
 ├── sitemap.xml             ← Generated (SEO)
 └── feed.xml                ← Generated (RSS)

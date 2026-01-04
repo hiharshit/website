@@ -208,7 +208,7 @@ function generateHTML(slug, frontmatter, markdownContent, template, readTime, is
     ? frontmatter.tags.filter(tag => tag && tag.trim() !== '') 
     : [];
   const tagsHtml = tags.length > 0
-    ? `<div class="post-tags">\n                            ${tags.map(tag => `<span class="post-tag">${tag}</span>`).join('\n                            ')}\n                        </div>`
+    ? `<div class="post-tags">\n                                ${tags.map(tag => `<span class="post-tag">${tag}</span>`).join('\n                                ')}\n                            </div>`
     : '';
 
   const draftBanner = isDraft 

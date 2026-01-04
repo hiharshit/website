@@ -2,7 +2,7 @@
   "name": "personal-website",
   "type": "module",
   "scripts": {
-    "dev": "bun scripts/optimize-images.mjs && bun scripts/build.mjs --drafts && bunx http-server -p 3000 -c-1",
+    "dev": "bun scripts/dev.mjs",
     "build": "bun scripts/optimize-images.mjs && bun scripts/build.mjs",
     "build:force": "bun scripts/optimize-images.mjs --force && bun scripts/build.mjs --force",
     "clean": "bun scripts/clean.mjs",
@@ -16,5 +16,8 @@
     "highlight.js": "^11.11.1",
     "markdown-it": "^14.1.0",
     "sharp": "^0.33.5"
+  },
+  "devDependencies": {
+    "browser-sync": "^3.0.3"
   }
 }
