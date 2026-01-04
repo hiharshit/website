@@ -64,5 +64,9 @@ if (!fs.existsSync(CONTENT_DIR)) {
 
 fs.writeFileSync(filePath, template);
 
+const imagesDir = path.join(__dirname, '../assets/images/src', slug);
+fs.mkdirSync(imagesDir, { recursive: true });
+
 console.log(`Created: content/posts/${slug}.md`);
-console.log(`\nNext: Edit the file, then run 'bun run build'`);
+console.log(`Created: assets/images/src/${slug}/`);
+console.log(`\nNext: Add images to the folder, then run 'bun run dev'`);

@@ -55,18 +55,16 @@ bun run start                 # Build everything and serve at localhost:3000
    ```bash
    bun run new "My Post Title"
    ```
-   This creates `content/posts/my-post-title.md` with today's date.
+   Creates `content/posts/my-post-title.md` and `assets/images/src/my-post-title/`.
 
 2. **Add images** (optional):
-   ```
-   assets/images/src/my-post-title/photo.png
-   ```
+   Drop images into the created `assets/images/src/my-post-title/` folder.
 
 3. **Build and preview:**
    ```bash
-   bun run start
+   bun run dev
    ```
-   Opens http://localhost:3000 with everything built.
+   Optimizes images, builds, and opens http://localhost:3000.
 
 4. **Publish:**
    ```bash

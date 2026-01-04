@@ -25,6 +25,7 @@ export const ZenReader = {
     this.initProgressTracker();
     this.initEndOfArticle();
     this.initSectionWaypoints();
+    this.initFullscreen();
   },
   
   createProgressBar() {
@@ -209,5 +210,53 @@ export const ZenReader = {
     
     onScroll(updateActiveWaypoint);
     updateActiveWaypoint();
+  },
+
+  initFullscreen() {
+    if (!document.fullscreenEnabled) return;
+
+    const btn = document.createElement('button');
+    btn.className = 'fullscreen-toggle';
+    btn.setAttribute('data-tooltip', 'Fullscreen (F)');
+    btn.setAttribute('aria-label', 'Toggle fullscreen');
+    btn.innerHTML = `
+      <svg class="icon-expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+      </svg>
+      <svg class="icon-compress" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
+      </svg>`;
+    
+    document.body.appendChild(btn);
+
+    const updateState = () => {
+      const isFullscreen = !!document.fullscreenElement;
+      btn.setAttribute('data-tooltip', isFullscreen ? 'Exit (F)' : 'Fullscreen (F)');
+    };
+
+    onScroll(() => {
+      btn.classList.toggle('visible', window.scrollY > 200);
+    });
+
+    btn.addEventListener('click', () => {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        document.documentElement.requestFullscreen();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'f' || e.key === 'F') {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else {
+          document.documentElement.requestFullscreen();
+        }
+      }
+    });
+
+    document.addEventListener('fullscreenchange', updateState);
   }
 };
