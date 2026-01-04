@@ -67,12 +67,18 @@ md.renderer.rules.fence = function (tokens, idx, options, env, self) {
   const highlighted = options.highlight(token.content, langName) || md.utils.escapeHtml(token.content);
   const copyIcon = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
 
+  const lines = highlighted.split('\n');
+  if (lines[lines.length - 1] === '') lines.pop();
+  const numberedLines = lines.map((line, i) => 
+    `<span class="code-line"><span class="line-number">${i + 1}</span><span class="line-content">${line}</span></span>`
+  ).join('\n');
+
   return  '<div class="code-block">\n' +
             '<div class="code-header">\n' +
               '<span class="code-lang">' + (langName || 'text') + '</span>\n' +
               '<button class="copy-btn" aria-label="Copy code">' + copyIcon + '</button>\n' +
             '</div>\n' +
-            '<pre><code class="' + langClass + ' hljs">' + highlighted + '</code></pre>\n' +
+            '<pre><code class="' + langClass + ' hljs">' + numberedLines + '</code></pre>\n' +
           '</div>\n';
 };
 

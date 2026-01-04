@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initReadTime();
   initCopyButtons();
   initAvatar();
+  initImageZoom();
   
   ZenReader.init();
 });
@@ -74,7 +75,10 @@ function initCopyButtons() {
       const codeEl = codeBlock.querySelector('pre code');
       if (!codeEl) return;
 
-      const text = codeEl.innerText;
+      const lineContents = codeEl.querySelectorAll('.line-content');
+      const text = lineContents.length 
+        ? Array.from(lineContents).map(el => el.textContent).join('\n')
+        : codeEl.innerText;
       let copied = false;
       
       if (navigator.clipboard) {
@@ -676,4 +680,57 @@ function initAvatar() {
       console.warn('Failed to load avatar image');
     };
   }).catch(() => {});
+}
+
+function initImageZoom() {
+  const postContent = document.querySelector('.post-content');
+  if (!postContent) return;
+
+  let overlay = null;
+
+  const close = () => {
+    if (!overlay) return;
+    overlay.classList.remove('active');
+    setTimeout(() => {
+      overlay.remove();
+      overlay = null;
+    }, 300);
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+  };
+
+  postContent.addEventListener('click', (e) => {
+    const img = e.target.closest('img');
+    if (!img) return;
+
+    overlay = document.createElement('div');
+    overlay.className = 'image-zoom-overlay';
+    
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'image-zoom-close';
+    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      close();
+    });
+    
+    const zoomedImg = document.createElement('img');
+    zoomedImg.src = img.dataset.src || img.src;
+    zoomedImg.alt = img.alt;
+    
+    overlay.appendChild(closeBtn);
+    overlay.appendChild(zoomedImg);
+    document.body.appendChild(overlay);
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+
+    requestAnimationFrame(() => overlay.classList.add('active'));
+
+    overlay.addEventListener('click', close);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && overlay) close();
+  });
 }

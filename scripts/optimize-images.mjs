@@ -17,11 +17,6 @@ const ROOT = path.join(__dirname, '..');
 const CONFIG = {
   SRC_DIR: path.join(ROOT, 'assets/images/src'),
   OUT_DIR: path.join(ROOT, 'assets/images'),
-  SIZES: [
-    { width: 400, suffix: '-400w' },
-    { width: 800, suffix: '-800w' },
-    { width: 1200, suffix: '-1200w' },
-  ],
   PLACEHOLDER_WIDTH: 20,
   QUALITY: 80,
   SUPPORTED_FORMATS: ['.jpg', '.jpeg', '.png', '.gif'],
@@ -45,32 +40,6 @@ function needsUpdate(srcPath, outPath) {
 async function processImage(srcPath, outDir, baseName) {
   const results = [];
   ensureDir(outDir);
-
-  for (const size of CONFIG.SIZES) {
-    const outName = `${baseName}${size.suffix}.webp`;
-    const outPath = path.join(outDir, outName);
-
-    if (!FORCE_REBUILD && !needsUpdate(srcPath, outPath)) {
-      continue;
-    }
-
-    const image = sharp(srcPath);
-    const metadata = await image.metadata();
-    const targetWidth = Math.min(size.width, metadata.width);
-
-    await image
-      .resize(targetWidth, null, { withoutEnlargement: true })
-      .webp({ quality: CONFIG.QUALITY })
-      .toFile(outPath);
-
-    const outStat = fs.statSync(outPath);
-    results.push({
-      name: outName,
-      size: outStat.size,
-      width: targetWidth,
-    });
-  }
-
 
   const fullOutName = `${baseName}.webp`;
   const fullOutPath = path.join(outDir, fullOutName);

@@ -84,7 +84,7 @@ bun run start                 # Build everything and serve at localhost:3000
 ### Deleting a Post
 
 1. Delete `content/posts/my-post.md`
-2. Delete `blog/my-post.html` (or run `bun run clean` to remove all generated files)
+2. Run `bun run clean` to remove generated files + orphaned images
 3. Run `bun run build` to regenerate sitemap/RSS
 4. Commit and push
 
@@ -155,7 +155,6 @@ Read time is auto-calculated from word count.
 For each source image:
 - `image.webp` - full-size optimized version
 - `image-placeholder.txt` - tiny blur placeholder for progressive loading
-- `image-400w.webp`, `image-800w.webp`, `image-1200w.webp` - responsive sizes (future use)
 
 ### Progressive Loading
 
@@ -179,13 +178,13 @@ Images automatically use blur-up lazy loading:
 
 ### Advanced
 
-| Command               | When to Use                                   |
-| --------------------- | --------------------------------------------- |
-| `bun run build:force` | After editing template or CSS                 |
-| `bun run clean`       | Reset — removes all generated files           |
-| `bun run build`       | Build without serving                         |
-| `bun run serve`       | Serve without building                        |
-| `bun run images`      | Process images only (build already does this) |
+| Command               | When to Use                                       |
+| --------------------- | ------------------------------------------------- |
+| `bun run build:force` | After editing template or CSS                     |
+| `bun run clean`       | Reset — removes generated files + orphaned images |
+| `bun run build`       | Build without serving                             |
+| `bun run serve`       | Serve without building                            |
+| `bun run images`      | Process images only (build already does this)     |
 
 ---
 
