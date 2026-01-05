@@ -85,7 +85,7 @@ function initCopyButtons() {
         try {
           await navigator.clipboard.writeText(text);
           copied = true;
-        } catch (e) {}
+        } catch {}
       }
       
       if (!copied) {
@@ -97,7 +97,7 @@ function initCopyButtons() {
         ta.select();
         try {
           copied = document.execCommand('copy');
-        } catch (e) {}
+        } catch {}
         document.body.removeChild(ta);
       }
       
@@ -155,7 +155,7 @@ function announceResults() {
 }
 
 function applyFiltersAndSort() {
-  let result = blogPosts.filter(post => {
+  const result = blogPosts.filter(post => {
     if (state.activeTag !== 'all') {
       const postTags = post.tags.map(t => t.toLowerCase());
       if (!postTags.includes(state.activeTag)) return false;
@@ -621,7 +621,7 @@ function initShareButtons() {
           try {
             await navigator.clipboard.writeText(url);
             copied = true;
-          } catch (e) {}
+          } catch {}
         }
         
         if (!copied) {
@@ -633,7 +633,7 @@ function initShareButtons() {
           ta.select();
           try {
             copied = document.execCommand('copy');
-          } catch (e) {}
+          } catch {}
           document.body.removeChild(ta);
         }
         

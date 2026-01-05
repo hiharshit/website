@@ -27,6 +27,7 @@ const CONFIG = {
     FEED: path.join(ROOT, 'feed.xml'),
     CSS_SRC: path.join(ROOT, 'css/style.css'),
     CSS_MIN: path.join(ROOT, 'css/style.min.css'),
+    SW: path.join(ROOT, 'sw.js'),
   }
 };
 
@@ -47,13 +48,13 @@ const md = new MarkdownIt({
     if (lang && hljs.getLanguage(lang)) {
       try {
         return hljs.highlight(str, { language: lang, ignoreIllegals: true }).value;
-      } catch (__) {}
+      } catch {}
     }
     return md.utils.escapeHtml(str);
   }
 });
 
-md.renderer.rules.fence = function (tokens, idx, options, env, self) {
+md.renderer.rules.fence = function (tokens, idx, options, _env, _self) {
   const token = tokens[idx];
   const info = token.info ? md.utils.unescapeAll(token.info).trim() : '';
   let langName = '';
@@ -82,11 +83,11 @@ md.renderer.rules.fence = function (tokens, idx, options, env, self) {
           '</div>\n';
 };
 
-const defaultImageRender = md.renderer.rules.image || function(tokens, idx, options, env, self) {
+const defaultImageRender = md.renderer.rules.image || function(tokens, idx, options, _env, self) {
   return self.renderToken(tokens, idx, options);
 };
 
-md.renderer.rules.image = function (tokens, idx, options, env, self) {
+md.renderer.rules.image = function (tokens, idx, options, _env, self) {
   const token = tokens[idx];
   const src = token.attrGet('src');
   const alt = token.content || '';
@@ -105,14 +106,14 @@ md.renderer.rules.image = function (tokens, idx, options, env, self) {
     }
   }
   
-  return defaultImageRender(tokens, idx, options, env, self);
+  return defaultImageRender(tokens, idx, options, _env, self);
 };
 
-const defaultLinkRender = md.renderer.rules.link_open || function(tokens, idx, options, env, self) {
+const defaultLinkRender = md.renderer.rules.link_open || function(tokens, idx, options, _env, self) {
   return self.renderToken(tokens, idx, options);
 };
 
-md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+md.renderer.rules.link_open = function (tokens, idx, options, _env, self) {
   const token = tokens[idx];
   const href = token.attrGet('href');
 
@@ -123,7 +124,7 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
     }
   }
 
-  return defaultLinkRender(tokens, idx, options, env, self);
+  return defaultLinkRender(tokens, idx, options, _env, self);
 };
 
 function parseFrontmatter(content) {
@@ -459,6 +460,20 @@ async function build() {
 `;
   fs.writeFileSync(path.join(ROOT, 'js/site-config.js'), siteConfigJS);
   console.log('Generated: js/site-config.js');
+
+  if (fs.existsSync(CONFIG.PATHS.SW)) {
+    const swContent = fs.readFileSync(CONFIG.PATHS.SW, 'utf-8');
+    const buildDate = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const newVersion = `${siteConfig.name.toLowerCase().replace(/\s+/g, '')}-${buildDate}`;
+    const updated = swContent.replace(
+      /const CACHE_NAME = '[^']+';/,
+      `const CACHE_NAME = '${newVersion}';`
+    );
+    if (updated !== swContent) {
+      fs.writeFileSync(CONFIG.PATHS.SW, updated);
+      console.log(`Updated: sw.js (${newVersion})`);
+    }
+  }
 
   let summary = `\nBuild complete: ${generated} generated`;
   if (skipped > 0) summary += `, ${skipped} unchanged`;

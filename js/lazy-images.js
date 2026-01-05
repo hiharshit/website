@@ -1,7 +1,3 @@
-/**
- * Progressive Image Loading
- * Uses IntersectionObserver to lazy-load images with blur-up effect.
- */
 (function() {
   const images = document.querySelectorAll('img[data-src]');
   if (!images.length) return;

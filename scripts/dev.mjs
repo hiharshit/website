@@ -65,7 +65,7 @@ function startWatching() {
           scheduleBuild();
         }
       });
-    } catch (e) {}
+    } catch {}
   });
   
   WATCH_FILES.forEach(file => {
@@ -74,7 +74,7 @@ function startWatching() {
         console.log(`📝 ${file} changed`);
         scheduleBuild();
       });
-    } catch (e) {}
+    } catch {}
   });
 }
 

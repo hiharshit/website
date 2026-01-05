@@ -1,4 +1,4 @@
-const CACHE_NAME = 'harshitsharma-v6';
+const CACHE_NAME = 'harshitsharma-20260106';
 const STATIC_ASSETS = [
   '/',
   '/index.html',

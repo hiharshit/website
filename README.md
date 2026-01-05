@@ -179,10 +179,20 @@ Images automatically use blur-up lazy loading:
 | Command               | When to Use                                       |
 | --------------------- | ------------------------------------------------- |
 | `bun run build:force` | After editing template or CSS                     |
-| `bun run clean`       | Reset — removes generated files + orphaned images |
+| `bun run clean`       | Reset - removes generated files + orphaned images |
 | `bun run build`       | Build without serving                             |
 | `bun run serve`       | Serve without building                            |
 | `bun run images`      | Process images only (build already does this)     |
+
+### Development
+
+| Command                | What It Does                      |
+| ---------------------- | --------------------------------- |
+| `bun run test`         | Run unit tests                    |
+| `bun run lint`         | Check for code issues             |
+| `bun run lint:fix`     | Auto-fix linting issues           |
+| `bun run format`       | Format all files with Prettier    |
+| `bun run format:check` | Check formatting without changing |
 
 ---
 
@@ -222,10 +232,13 @@ Images automatically use blur-up lazy loading:
 │   ├── new-post.mjs        ← Post scaffolder
 │   └── clean.mjs           ← Remove generated files
 │
+├── tests/                  ← Unit tests (bun test)
+│   └── build.test.js
+│
 ├── index.html              ← Homepage
 ├── about.html              ← About page
 ├── 404.html                ← Error page
-├── sw.js                   ← Service worker (offline caching)
+├── sw.js                   ← Service worker (auto-versioned)
 ├── robots.txt              ← Search engine rules
 ├── sitemap.xml             ← Generated (SEO)
 └── feed.xml                ← Generated (RSS)

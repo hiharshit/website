@@ -10,7 +10,12 @@
     "images:force": "bun scripts/optimize-images.mjs --force",
     "new": "bun scripts/new-post.mjs",
     "serve": "bunx http-server -p 3000 -c-1",
-    "start": "bun run build && bunx http-server -p 3000 -c-1"
+    "start": "bun run build && bunx http-server -p 3000 -c-1",
+    "test": "bun test",
+    "lint": "eslint js scripts",
+    "lint:fix": "eslint js scripts --fix",
+    "format": "prettier --write \"**/*.{js,mjs,json,css,md}\"",
+    "format:check": "prettier --check \"**/*.{js,mjs,json,css,md}\""
   },
   "dependencies": {
     "highlight.js": "^11.11.1",
@@ -18,6 +23,9 @@
     "sharp": "^0.33.5"
   },
   "devDependencies": {
-    "browser-sync": "^3.0.3"
+    "@eslint/js": "^9.17.0",
+    "browser-sync": "^3.0.3",
+    "eslint": "^9.17.0",
+    "prettier": "^3.4.2"
   }
 }
