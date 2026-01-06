@@ -4,11 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description"
-    content="Personal blog by Harshit Sharma exploring philosophical thoughts inspired by German existentialism and Hindu philosophy.">
+  <meta name="description" content="thinking ...">
   <meta name="author" content="Harshit Sharma">
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self'; style-src 'self'; font-src 'self'; script-src 'self'; img-src 'self' data:;">
+    content="default-src 'self'; style-src 'self'; font-src 'self'; script-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self';">
   <title>Harshit Sharma | Posts</title>
 
   <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
@@ -23,14 +22,12 @@
   <meta property="og:type" content="website">
 
   <meta property="og:title" content="Harshit Sharma | Posts">
-  <meta property="og:description"
-    content="Personal blog exploring philosophical thoughts on Existentialism and Vedanta.">
+  <meta property="og:description" content="thinking ...">
   <meta property="og:image" content="/assets/images/og-default.png">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Harshit Sharma | Posts">
-  <meta name="twitter:description"
-    content="Personal blog exploring philosophical thoughts on Existentialism and Vedanta.">
+  <meta name="twitter:description" content="thinking ...">
   <meta name="twitter:image" content="/assets/images/og-default.png">
 
   <script src="js/theme-init.js"></script>
@@ -94,7 +91,39 @@
           </div>
         </div>
 
-        <section class="blog-list" id="blogList"></section>
+        <section class="blog-list loading" id="blogList"></section>
+        <div class="blog-skeleton-container">
+          <div class="blog-skeleton">
+            <div class="skeleton-header">
+              <div class="skeleton skeleton-title"></div>
+              <div class="skeleton skeleton-date"></div>
+            </div>
+            <div class="skeleton-body">
+              <div class="skeleton skeleton-text"></div>
+              <div class="skeleton skeleton-text"></div>
+            </div>
+          </div>
+          <div class="blog-skeleton">
+            <div class="skeleton-header">
+              <div class="skeleton skeleton-title"></div>
+              <div class="skeleton skeleton-date"></div>
+            </div>
+            <div class="skeleton-body">
+              <div class="skeleton skeleton-text"></div>
+              <div class="skeleton skeleton-text"></div>
+            </div>
+          </div>
+          <div class="blog-skeleton">
+            <div class="skeleton-header">
+              <div class="skeleton skeleton-title"></div>
+              <div class="skeleton skeleton-date"></div>
+            </div>
+            <div class="skeleton-body">
+              <div class="skeleton skeleton-text"></div>
+              <div class="skeleton skeleton-text"></div>
+            </div>
+          </div>
+        </div>
 
         <div class="no-results" id="noResults">
           <p>No posts found matching your search.</p>

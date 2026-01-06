@@ -30,7 +30,10 @@ export function initLayout() {
             <li><a href="${root}index.html" class="${isHome ? 'active' : ''}" ${isHome ? 'aria-current="page"' : ''}>Home</a></li>
             <li><a href="${root}about.html" class="${isAbout ? 'active' : ''}" ${isAbout ? 'aria-current="page"' : ''}>About</a></li>
           </ul>
-          <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" data-tooltip="Toggle theme"><svg
+          <button class="command-palette-trigger" id="commandPaletteTrigger" aria-label="Open command palette" data-tooltip="Search" data-tooltip-key="⌘K"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z" />
+            </svg></button>
+          <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" data-tooltip="Toggle theme" data-tooltip-key="T"><svg
               class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
             </svg><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

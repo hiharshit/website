@@ -13,6 +13,7 @@ const DEBOUNCE_MS = 300;
 let buildTimeout = null;
 let server = null;
 let isBuilding = false;
+const recentChanges = new Set();
 
 async function build() {
   if (isBuilding) return;
@@ -29,6 +30,7 @@ async function build() {
   
   console.log(`✅ Built in ${Date.now() - start}ms`);
   isBuilding = false;
+  recentChanges.clear();
   return true;
 }
 
@@ -59,9 +61,11 @@ function startWatching() {
   WATCH_DIRS.forEach(dir => {
     const fullPath = path.join(ROOT, dir);
     try {
-      watch(fullPath, { recursive: true }, (event, filename) => {
-        if (filename && !filename.endsWith('.html') && !filename.endsWith('.min.css')) {
-          console.log(`📝 ${dir}/${filename} changed`);
+      watch(fullPath, { recursive: true }, (_event, filename) => {
+        const filePath = `${dir}/${filename}`;
+        if (filename && !filename.endsWith('.html') && !filename.endsWith('.min.css') && !recentChanges.has(filePath)) {
+          recentChanges.add(filePath);
+          console.log(`📝 ${filePath} changed`);
           scheduleBuild();
         }
       });
@@ -71,8 +75,11 @@ function startWatching() {
   WATCH_FILES.forEach(file => {
     try {
       watch(path.join(ROOT, file), () => {
-        console.log(`📝 ${file} changed`);
-        scheduleBuild();
+        if (!recentChanges.has(file)) {
+          recentChanges.add(file);
+          console.log(`📝 ${file} changed`);
+          scheduleBuild();
+        }
       });
     } catch {}
   });

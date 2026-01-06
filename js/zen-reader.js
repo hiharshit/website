@@ -217,7 +217,8 @@ export const ZenReader = {
 
     const btn = document.createElement('button');
     btn.className = 'fullscreen-toggle';
-    btn.setAttribute('data-tooltip', 'Fullscreen (F)');
+    btn.setAttribute('data-tooltip', 'Full screen');
+    btn.setAttribute('data-tooltip-key', 'F');
     btn.setAttribute('aria-label', 'Toggle fullscreen');
     btn.innerHTML = `
       <svg class="icon-expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -231,7 +232,7 @@ export const ZenReader = {
 
     const updateState = () => {
       const isFullscreen = !!document.fullscreenElement;
-      btn.setAttribute('data-tooltip', isFullscreen ? 'Exit (F)' : 'Fullscreen (F)');
+      btn.setAttribute('data-tooltip', isFullscreen ? 'Exit full screen' : 'Full screen');
     };
 
     onScroll(() => {

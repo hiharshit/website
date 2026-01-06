@@ -62,6 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initCopyButtons();
   initAvatar();
   initImageZoom();
+  initHeadingLinks();
+  initCommandPalette();
   
   ZenReader.init();
 });
@@ -188,6 +190,7 @@ function renderPosts(posts) {
   if (!blogList) return;
 
   blogList.innerHTML = '';
+  blogList.classList.remove('loading');
   
   posts.forEach((post, index) => {
     const article = document.createElement('article');
@@ -222,8 +225,14 @@ function renderPosts(posts) {
 
 function updateUIState() {
   const noResults = document.getElementById('noResults');
+  const skeletonContainer = document.querySelector('.blog-skeleton-container');
+  
   if (noResults) {
     noResults.classList.toggle('visible', state.filteredPosts.length === 0);
+  }
+  
+  if (skeletonContainer) {
+    skeletonContainer.style.display = state.filteredPosts.length === 0 ? 'none' : '';
   }
 
   const clearFilterBtn = document.getElementById('clearFilterBtn');
@@ -541,7 +550,13 @@ function initTooltips() {
     if (!text) return;
 
     activeTarget = target;
-    tooltip.textContent = text;
+    
+    const key = target.getAttribute('data-tooltip-key');
+    if (key) {
+      tooltip.innerHTML = `${text} <kbd class="tooltip-kbd">${key}</kbd>`;
+    } else {
+      tooltip.textContent = text;
+    }
     tooltip.style.display = 'block';
     
     const placement = target.getAttribute('data-tooltip-placement') || 'top';
@@ -734,3 +749,272 @@ function initImageZoom() {
     if (e.key === 'Escape' && overlay) close();
   });
 }
+
+function initHeadingLinks() {
+  const postContent = document.querySelector('.post-content');
+  if (!postContent) return;
+
+  const headings = postContent.querySelectorAll('h2');
+  
+  headings.forEach(heading => {
+    const text = heading.textContent.trim();
+    const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    heading.id = id;
+
+    const anchor = document.createElement('button');
+    anchor.className = 'heading-anchor';
+    anchor.setAttribute('aria-label', 'Copy link to section');
+    anchor.setAttribute('data-tooltip', 'Copy link');
+    anchor.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
+
+    anchor.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const url = `${window.location.origin}${window.location.pathname}#${id}`;
+      
+      try {
+        await navigator.clipboard.writeText(url);
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = url;
+        ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+
+      anchor.classList.add('copied');
+      anchor.setAttribute('data-tooltip', 'Copied!');
+      setTimeout(() => {
+        anchor.classList.remove('copied');
+        anchor.setAttribute('data-tooltip', 'Copy link');
+      }, 2000);
+    });
+
+    heading.prepend(anchor);
+  });
+}
+
+function initCommandPalette() {
+  const toggleTheme = () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  };
+
+  const baseCommands = [
+    { id: 'home', title: 'Go to Posts', icon: 'home', action: () => window.location.href = '/', group: 'Navigation' },
+    { id: 'about', title: 'Go to About', icon: 'user', action: () => window.location.href = '/about.html', group: 'Navigation' },
+    { id: 'theme', title: 'Toggle Theme', icon: 'moon', action: toggleTheme, group: 'Settings' }
+  ];
+
+  const blogCommands = blogPosts.map(post => ({
+    id: `post-${post.url}`,
+    title: post.title,
+    icon: 'file-text',
+    action: () => window.location.href = post.url,
+    group: 'Posts'
+  }));
+
+  const commands = [...baseCommands, ...blogCommands];
+
+  const icons = {
+    home: '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+    'file-text': '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>',
+    user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+    moon: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
+    sun: '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>',
+    search: '<circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>'
+  };
+
+  let overlay = null;
+  let selectedIndex = 0;
+  let filteredCommands = [...commands];
+
+  const createPalette = () => {
+    overlay = document.createElement('div');
+    overlay.className = 'command-palette-overlay';
+    overlay.innerHTML = `
+      <div class="command-palette">
+        <div class="command-palette-header">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${icons.search}</svg>
+          <input type="text" class="command-palette-input" placeholder="Type a command or search..." autocomplete="off">
+        </div>
+        <div class="command-palette-list"></div>
+        <div class="command-palette-footer">
+          <div class="command-palette-footer-hints">
+            <span><kbd>↑</kbd><kbd>↓</kbd> to navigate</span>
+            <span><kbd>↵</kbd> to select</span>
+            <span><kbd>esc</kbd> to close</span>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    
+    const input = overlay.querySelector('.command-palette-input');
+    const list = overlay.querySelector('.command-palette-list');
+
+    const render = () => {
+      if (filteredCommands.length === 0) {
+        list.innerHTML = '<div class="command-palette-empty">No commands found</div>';
+        return;
+      }
+
+      const groups = {};
+      filteredCommands.forEach(cmd => {
+        if (!groups[cmd.group]) groups[cmd.group] = [];
+        groups[cmd.group].push(cmd);
+      });
+
+      let html = '';
+      let idx = 0;
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      
+      Object.entries(groups).forEach(([group, cmds]) => {
+        html += `<div class="command-palette-group">${group}</div>`;
+        cmds.forEach(cmd => {
+          const shortcut = cmd.shortcut ? `<div class="command-palette-shortcut">${cmd.shortcut.map(k => `<kbd>${k}</kbd>`).join('')}</div>` : '';
+          const iconKey = cmd.id === 'theme' ? (isDark ? 'sun' : 'moon') : cmd.icon;
+          html += `
+            <div class="command-palette-item${idx === selectedIndex ? ' selected' : ''}" data-index="${idx}" data-id="${cmd.id}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${icons[iconKey]}</svg>
+              <div class="command-palette-item-content">
+                <span class="command-palette-item-title">${cmd.title}</span>
+              </div>
+              ${shortcut}
+            </div>
+          `;
+          idx++;
+        });
+      });
+      list.innerHTML = html;
+      
+      const selectedEl = list.querySelector('.command-palette-item.selected');
+      if (selectedEl) {
+        selectedEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    };
+
+    const filter = (query) => {
+      const q = query.toLowerCase().trim();
+      filteredCommands = q ? commands.filter(cmd => cmd.title.toLowerCase().includes(q)) : [...commands];
+      selectedIndex = 0;
+      render();
+    };
+
+    input.addEventListener('input', (e) => filter(e.target.value));
+
+    list.addEventListener('click', (e) => {
+      const item = e.target.closest('.command-palette-item');
+      if (item) {
+        selectedIndex = parseInt(item.dataset.index);
+        if (filteredCommands[selectedIndex]) {
+          close();
+          filteredCommands[selectedIndex].action();
+        }
+      }
+    });
+
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) close();
+    });
+
+    render();
+    return { input, render };
+  };
+
+  const open = () => {
+    if (overlay) return;
+    
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    
+    const { input, render } = createPalette();
+    filteredCommands = [...commands];
+    selectedIndex = 0;
+    render();
+    
+    requestAnimationFrame(() => {
+      overlay.classList.add('active');
+      setTimeout(() => {
+        input.focus();
+      }, 50);
+    });
+
+    const handleKeydown = (e) => {
+      if (e.key === 'Escape') {
+        close();
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedIndex = (selectedIndex + 1) % filteredCommands.length;
+        render();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedIndex = (selectedIndex - 1 + filteredCommands.length) % filteredCommands.length;
+        render();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (filteredCommands[selectedIndex]) {
+          close();
+          filteredCommands[selectedIndex].action();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeydown);
+    overlay._handleKeydown = handleKeydown;
+  };
+
+  const close = () => {
+    if (!overlay) return;
+    overlay.classList.remove('active');
+    
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+    
+    if (overlay._handleKeydown) {
+      document.removeEventListener('keydown', overlay._handleKeydown);
+    }
+    setTimeout(() => {
+      overlay.remove();
+      overlay = null;
+    }, 150);
+  };
+
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      if (overlay) close();
+      else open();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 't' || e.key === 'T') {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      
+      const activeEl = document.activeElement;
+      const isInput = activeEl && (
+        activeEl.tagName === 'INPUT' || 
+        activeEl.tagName === 'TEXTAREA' || 
+        activeEl.isContentEditable
+      );
+      
+      if (!isInput) {
+        e.preventDefault();
+        if (overlay) close();
+        toggleTheme();
+      }
+    }
+  });
+
+  window.openCommandPalette = open;
+
+  const trigger = document.getElementById('commandPaletteTrigger');
+  if (trigger) {
+    trigger.addEventListener('click', open);
+  }
+}
+
