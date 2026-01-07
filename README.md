@@ -19,10 +19,15 @@ Edit `site.config.json` to update your site settings:
   "domain": "yourdomain.com",
   "email": "you@email.com",
   "avatar": "/assets/images/avatar.jpg",
-  "social": {
+  "footer": {
     "twitter": "username",
     "github": "username",
-    "linkedin": "username"
+    "linkedin": "username",
+    "email": "you@email.com"
+  },
+  "share": {
+    "twitter": true,
+    "copyLink": true
   }
 }
 ```
@@ -168,11 +173,11 @@ Images automatically use blur-up lazy loading:
 
 ### Daily Use
 
-| Command               | What It Does                           |
-| --------------------- | -------------------------------------- |
-| `bun run new "Title"` | Create a new post                      |
-| `bun run dev`         | Watch mode with auto-rebuild on change |
-| `bun run start`       | Build + preview (excludes drafts)      |
+| Command               | What It Does                                         |
+| --------------------- | ---------------------------------------------------- |
+| `bun run new "Title"` | Create a new post                                    |
+| `bun run dev`         | Watch mode with auto-rebuild (content, CSS, scripts) |
+| `bun run start`       | Build + preview (excludes drafts)                    |
 
 ### Advanced
 

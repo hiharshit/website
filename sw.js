@@ -1,4 +1,4 @@
-const CACHE_NAME = 'harshitsharma-20260107';
+const CACHE_NAME = 'harshitsharma-20260111';
 const STATIC_ASSETS = [
   '/',
   '/index.html',

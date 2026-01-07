@@ -118,7 +118,8 @@ md.renderer.rules.link_open = function (tokens, idx, options, _env, self) {
   const href = token.attrGet('href');
 
   if (href && (href.startsWith('http://') || href.startsWith('https://'))) {
-    if (!href.startsWith(CONFIG.DOMAIN)) {
+    const isExternal = !CONFIG.DOMAIN || !href.startsWith(CONFIG.DOMAIN);
+    if (isExternal) {
        token.attrSet('target', '_blank');
        token.attrSet('rel', 'noopener noreferrer');
     }

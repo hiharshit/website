@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, '..');
 
-const WATCH_DIRS = ['content', 'css'];
+const WATCH_DIRS = ['content', 'css', 'scripts'];
 const WATCH_FILES = ['site.config.json', 'blog/_template.html'];
 const DEBOUNCE_MS = 300;
 
